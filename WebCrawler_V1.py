@@ -297,8 +297,9 @@ def upload_to_supabase(df):
         print("Supabase not initialized. Skipping upload.")
         return
 
-    # Cleaning and formatting publish_date
-    df['publish_date'] = pd.to_datetime(df['publish_date'], errors='coerce').dt.date
+    # Cleaning and formatting publish_date to JSON-safe strings
+    df['publish_date'] = pd.to_datetime(df['publish_date'], errors='coerce')
+    df['publish_date'] = df['publish_date'].dt.strftime('%Y-%m-%d').where(pd.notna(df['publish_date']), None)
 
     # Ensuring columns match the table schema
     cols = ["site_url", "article_url", "title", "publish_date", "keyword_category",
